@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DartBoard", "DartBoard\DartBoard.csproj", "{35C15E17-75E9-41AC-B934-691F970E08CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35C15E17-75E9-41AC-B934-691F970E08CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C15E17-75E9-41AC-B934-691F970E08CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C15E17-75E9-41AC-B934-691F970E08CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C15E17-75E9-41AC-B934-691F970E08CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04C7E46D-6254-480D-BA85-9A9AA30A1FAC}
+	EndGlobalSection
+EndGlobal
