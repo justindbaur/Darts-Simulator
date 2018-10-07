@@ -46,7 +46,8 @@ namespace DartBoard
                 new Dart{ },
                 new Dart{ },
                 new Dart{ }
-             };
+            };
+            var listOfScores = new List<int>();
 
             for (int i = 0; i < listOfDarts.Count; i++)
             {
@@ -59,6 +60,22 @@ namespace DartBoard
 
             if (!FinishStart)
             {
+                for (int i = 0; i < listOfDarts.Count; i++)
+                {
+                    if (listOfDarts[i].IsDouble())
+                    {
+                        FinishStart = true;
+                    }
+                }
+                if (FinishStart)
+                {
+                    int turnScore;
+
+                    for (int i = 0; i < listOfDarts.Count; i++)
+                    {
+
+                    }
+                }
                 Console.WriteLine();
             }
         }
