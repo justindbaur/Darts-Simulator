@@ -1,0 +1,7 @@
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\bin\Debug\DartBoard.exe.config
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\bin\Debug\DartBoard.exe
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\bin\Debug\DartBoard.pdb
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\obj\Debug\DartBoard.csprojResolveAssemblyReference.cache
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\obj\Debug\DartBoard.csproj.CoreCompileInputs.cache
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\obj\Debug\DartBoard.exe
+C:\Users\justi\Documents\GitHub\Game-of-Darts\DartBoard\DartBoard\obj\Debug\DartBoard.pdb

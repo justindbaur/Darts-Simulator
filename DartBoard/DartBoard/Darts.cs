@@ -24,11 +24,14 @@ namespace DartBoard
                 for (int i = 0; i < Players.Count; i++)
                 {
                     Players[i].DoTurn();
-                    if (Players[i].Score <= 0)
+                    if (Players[i].Score > 0)
+                    {
+                        continue;
+                    }
+                    else
                     {
                         break;
                     }
-
                 }
             }
         }
@@ -47,14 +50,22 @@ namespace DartBoard
                 new Dart{ },
                 new Dart{ }
             };
-            var listOfScores = new List<int>();
+
+
+            if (GameOfDarts.ShowTurn)
+            {
+                Console.WriteLine($"Player {PlayerNum} throwing darts.");
+            }
 
             for (int i = 0; i < listOfDarts.Count; i++)
             {
-                int dartScore = listOfDarts[i].GetScore();
-                if (GameOfDarts.ShowTurn)
+                listOfDarts[i].ThrowDart();
+            }
+            if (GameOfDarts.ShowTurn)
+            {
+                for (int i = 0; i < listOfDarts.Count; i++)
                 {
-                    Console.WriteLine($"Dart {i +1}: Score: {dartScore} | Region: {listOfDarts[i].ShotRegion}");
+                    Console.WriteLine($"Dart {i + 1}: Score: {listOfDarts[i].Score} | Region: {listOfDarts[i].ShotRegion}");
                 }
             }
 
@@ -65,19 +76,59 @@ namespace DartBoard
                     if (listOfDarts[i].IsDouble())
                     {
                         FinishStart = true;
+                        break;
                     }
                 }
+
                 if (FinishStart)
                 {
-                    int turnScore;
+                    int turnScore = 0;
 
                     for (int i = 0; i < listOfDarts.Count; i++)
                     {
+                        turnScore += listOfDarts[i].Score;
+                    }
+                    Score =- turnScore;
+                    Console.WriteLine($"Double was gotten. Player {PlayerNum} new score is {Score}");
+                }
+                else
+                {
+                    Console.WriteLine($"Double was not gotten. Score is still {Score}");
+                }
+            }
+            else
+            {
+                int tempScore = 0;
 
+                for (int i = 0; i < listOfDarts.Count; i++)
+                {
+                    tempScore += listOfDarts[i].Score;
+                }
+
+                if (Score - tempScore <= 0)
+                {
+                    bool doubleGot = false;
+
+                    for (int i = 0; i < listOfDarts.Count; i++)
+                    {
+                        if(listOfDarts[i].IsDouble())
+                        {
+                            doubleGot = true;
+                            break;
+                        }
+                    }
+
+                    if (doubleGot)
+                    {
+                        Score = -tempScore;
+                        return;
                     }
                 }
-                Console.WriteLine();
             }
+
+            
+
+
         }
 
         public Player()
@@ -90,7 +141,8 @@ namespace DartBoard
     {
         public int Shot { get; set; }
         public Region ShotRegion { get; set; }
-        
+        public int Score { get; set; }
+
         public enum Region
         {
             None,
@@ -99,30 +151,26 @@ namespace DartBoard
             Triple
         }
 
-        public int GetScore()
+        public void ThrowDart()
         {
             Random rnd = new Random();
             this.Shot = rnd.Next(0, 21);
 
             if (this.Shot == 0)
             {
-                return 0;
+                Score = 0;
+                return;
             }
-            else if (this.Shot > 0)
+            else if (this.Shot == 21)
             {
-                this.ShotRegion = (Region)rnd.Next(1, 3);
-                if (this.Shot == 21 && this.ShotRegion == Region.Single)
-                {
-                    return 25;
-                }
-                else
-                {
-                    return 50;
-                }
+                this.ShotRegion = (Region)rnd.Next(1, 2);
+                Score = 25 * (int)this.ShotRegion;
             }
             else
             {
-                return this.Shot * ((int)this.ShotRegion + 1);
+                this.ShotRegion = (Region)rnd.Next(1, 3);
+                Score =  this.Shot * (int)this.ShotRegion;
+                return;
             }
         }
 
