@@ -10,6 +10,7 @@ namespace DartBoard
     {
         static void Main(string[] args)
         {
+            Dart.DartRand = new Random();
             GameOfDarts.ShowTurn = true;
             GameOfDarts.StartGame(301);
 

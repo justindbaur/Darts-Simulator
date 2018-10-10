@@ -16,14 +16,17 @@ namespace DartBoard
             Players = new List<Player>()
             {
                 new Player { PlayerNum = 1, Score = startingScore},
-                new Player { PlayerNum = 1, Score = startingScore}
+                new Player { PlayerNum = 2, Score = startingScore}
             };
-
-            while (Players.FindAll(p => p.Score >= 0).Count == Players.Count)
+            int r = 1;
+            while (Players.FindAll(p => p.Score > 0).Count == Players.Count)
             {
+                Console.WriteLine($"Round {r}:");
                 for (int i = 0; i < Players.Count; i++)
                 {
-                    Players[i].DoTurn();
+                    Players[i].RunTurn();
+                    Console.WriteLine();
+                    
                     if (Players[i].Score > 0)
                     {
                         continue;
@@ -33,6 +36,8 @@ namespace DartBoard
                         break;
                     }
                 }
+                //Console.ReadLine();
+                r++;
             }
         }
     }
@@ -42,54 +47,83 @@ namespace DartBoard
         public int Score { get; set; }
         public bool FinishStart { get; set; }
 
-        public void DoTurn()
+
+        public void RunTurn()
         {
-            var listOfDarts = new List<Dart>()
-            {
-                new Dart{ },
-                new Dart{ },
-                new Dart{ }
-            };
+            int tempPlayerScore = Score;
 
+            var listOfDarts = new List<Dart>();
 
             if (GameOfDarts.ShowTurn)
             {
-                Console.WriteLine($"Player {PlayerNum} throwing darts.");
+                Console.WriteLine($"Player {PlayerNum} throwing darts. Starting Score: {Score}");
             }
+            //Setting the current turns running score.
+            int curTurnScore = 0;
 
-            for (int i = 0; i < listOfDarts.Count; i++)
+            for (int i = 0; i < 3; i++)
             {
-                listOfDarts[i].ThrowDart();
-            }
-            if (GameOfDarts.ShowTurn)
-            {
-                for (int i = 0; i < listOfDarts.Count; i++)
+                listOfDarts.Add(new Dart());
+
+                listOfDarts.Last().ThrowDart();
+
+                if (GameOfDarts.ShowTurn)
                 {
-                    Console.WriteLine($"Dart {i + 1}: Score: {listOfDarts[i].Score} | Region: {listOfDarts[i].ShotRegion}");
+                    Console.WriteLine($"Dart {i + 1}: Shot: {listOfDarts.Last().Shot} | Region: {listOfDarts.Last().ShotRegion} | Score: {listOfDarts.Last().Score}");
+                }
+
+                curTurnScore += listOfDarts.Last().Score;
+
+                if ((tempPlayerScore - curTurnScore) == 0)
+                {
+                    if (listOfDarts.Last().IsDouble())
+                    {
+                        Console.WriteLine($"Player {PlayerNum} won.");
+                        Score = tempPlayerScore - curTurnScore;
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Player {PlayerNum} can't win");
+                        return;
+                    }
+                }
+                else if ((tempPlayerScore - curTurnScore) < 0)
+                {
+                    Console.WriteLine($"Player {PlayerNum} got less than 0, turn ended.");
+                    return;
                 }
             }
 
             if (!FinishStart)
             {
-                for (int i = 0; i < listOfDarts.Count; i++)
+                //If the first dart is a double they have doubled in.
+                if (listOfDarts[0].IsDouble())
                 {
-                    if (listOfDarts[i].IsDouble())
-                    {
-                        FinishStart = true;
-                        break;
-                    }
+                    FinishStart = true;
                 }
 
+                //If they have finished the start.  Calculate their score.
                 if (FinishStart)
                 {
                     int turnScore = 0;
 
+                    //Combine all darts scores
                     for (int i = 0; i < listOfDarts.Count; i++)
                     {
                         turnScore += listOfDarts[i].Score;
                     }
-                    Score =- turnScore;
-                    Console.WriteLine($"Double was gotten. Player {PlayerNum} new score is {Score}");
+
+                    //If their score is less than 0, end their turn.
+                    if ((tempPlayerScore - turnScore) < 0)
+                    {
+                        Console.WriteLine($"Turn score is less than 0. Player {PlayerNum} turn ended.");
+                    }
+                    else
+                    {
+                        Score -= turnScore;
+                        Console.WriteLine($"Double was gotten. Player {PlayerNum} new score is {Score}");
+                    }
                 }
                 else
                 {
@@ -105,29 +139,37 @@ namespace DartBoard
                     tempScore += listOfDarts[i].Score;
                 }
 
-                if (Score - tempScore <= 0)
+                if ((Score - tempScore) == 0)
                 {
                     bool doubleGot = false;
 
-                    for (int i = 0; i < listOfDarts.Count; i++)
+                    if (listOfDarts[listOfDarts.Count - 1].IsDouble())
                     {
-                        if(listOfDarts[i].IsDouble())
-                        {
-                            doubleGot = true;
-                            break;
-                        }
+                        doubleGot = true;
                     }
 
                     if (doubleGot)
                     {
-                        Score = -tempScore;
+                        Score -= tempScore;
+                        Console.WriteLine($"Double was got. Player {PlayerNum} Won!");
                         return;
                     }
+                    else
+                    {
+                        Console.WriteLine($"Double was needed and not gotten. Player {PlayerNum} score is still {Score}");
+                    }
                 }
+                else if ((Score - tempScore) <= 1)
+                {
+                    Console.WriteLine($"Player {PlayerNum} went less than 1, score is still {Score}");
+                }
+                else
+                {
+                    Score -= tempScore;
+                }
+
+                Console.WriteLine($"Player {PlayerNum} new score is {Score}");
             }
-
-            
-
 
         }
 
@@ -142,6 +184,13 @@ namespace DartBoard
         public int Shot { get; set; }
         public Region ShotRegion { get; set; }
         public int Score { get; set; }
+        public static Random DartRand { get; set; }
+
+        public Dart()
+        {
+            //DartRand = new Random();
+
+        }
 
         public enum Region
         {
@@ -153,8 +202,7 @@ namespace DartBoard
 
         public void ThrowDart()
         {
-            Random rnd = new Random();
-            this.Shot = rnd.Next(0, 21);
+            this.Shot = DartRand.Next(0, 21);
 
             if (this.Shot == 0)
             {
@@ -163,13 +211,13 @@ namespace DartBoard
             }
             else if (this.Shot == 21)
             {
-                this.ShotRegion = (Region)rnd.Next(1, 2);
+                this.ShotRegion = (Region)DartRand.Next(1, 2);
                 Score = 25 * (int)this.ShotRegion;
             }
             else
             {
-                this.ShotRegion = (Region)rnd.Next(1, 3);
-                Score =  this.Shot * (int)this.ShotRegion;
+                this.ShotRegion = (Region)DartRand.Next(1, 3);
+                Score = this.Shot * (int)this.ShotRegion;
                 return;
             }
         }
@@ -178,7 +226,7 @@ namespace DartBoard
         {
             if (this.Shot == 21)
             {
-                return this.ShotRegion >= Region.Double ? true : false;
+                return this.ShotRegion == Region.Double ? true : false;
             }
             else if (this.ShotRegion == Region.Double)
             {
