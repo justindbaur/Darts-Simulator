@@ -8,18 +8,24 @@ namespace DartBoard
 {
     public class GameOfDarts
     {
+        //List of the players playing the game.
         public static List<Player> Players { get; set; }
-        public static bool ShowTurn { get; set; }
+        //Lets you choose if you want all the information or just the summaries
+        public static bool ShowDart { get; set; }
+        //Will let you choose if you want to pause after each round
         public static bool RoundPause { get; set; }
 
-        public static void StartGame(int startingScore)
+        public static int StartingScore { get; set; }
+
+        //Starts the game of darts. Lets you choose the starting score.
+        public static void StartGame()
         {
             //Creating two players, 1 and 2
 
             Players = new List<Player>()
             {
-                new Player { PlayerNum = 1, Score = startingScore},
-                new Player { PlayerNum = 2, Score = startingScore}
+                new Player { PlayerNum = 1, Score = StartingScore, MySkill = Skill.Medium},
+                new Player { PlayerNum = 2, Score = StartingScore, MySkill = Skill.High}
             };
             //Starting a int for round
             int r = 1;
@@ -34,7 +40,7 @@ namespace DartBoard
                 for (int i = 0; i < Players.Count; i++)
                 {
                     //Runs player turn
-                    Players[i].RunTurn();
+                    Players[i].DoTurn();
 
                     Console.WriteLine();
 
@@ -49,8 +55,10 @@ namespace DartBoard
                     }
                 }
 
+                //Will pause after a round has been completed.
                 if (RoundPause)
                 {
+                    //Lets you choose to skip through rounds after the game has already started.
                     string response = Console.ReadLine();
                     if (response.ToUpper() == "SKIP")
                     {

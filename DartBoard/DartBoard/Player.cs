@@ -15,6 +15,8 @@ namespace DartBoard
         public int Score { get; set; }
         //Boolean to see if they have doubled into the game, I want to work it out of the program and rely on if their score is equal to the starting score.
         public bool FinishStart { get; set; }
+        //Skill enum
+        public Skill MySkill { get; set; }
 
         //Run a turn based on a three dart throw
         public void RunTurn()
@@ -25,7 +27,7 @@ namespace DartBoard
             //Creates a list of darts
             var listOfDarts = new List<Dart>();
 
-            if (GameOfDarts.ShowTurn)
+            if (GameOfDarts.ShowDart)
             {
                 Console.WriteLine($"Player {PlayerNum} throwing darts. Starting Score: {Score}");
             }
@@ -37,9 +39,9 @@ namespace DartBoard
             {
                 listOfDarts.Add(new Dart());
 
-                listOfDarts.Last().ThrowDart();
+                listOfDarts.Last().ThrowRandomDart();
 
-                if (GameOfDarts.ShowTurn)
+                if (GameOfDarts.ShowDart)
                 {
                     Console.WriteLine($"Dart {i + 1}: Shot: {listOfDarts.Last().Shot} | Region: {listOfDarts.Last().ShotRegion} | Score: {listOfDarts.Last().Score}");
                 }
@@ -147,5 +149,123 @@ namespace DartBoard
             }
 
         }
+
+        public void DoTurn()
+        {
+            int curTurnScore = 0;
+
+            var turnDarts = new List<Dart>();
+
+            //Prints out player info
+            Print();
+
+            //
+            for (int i = 0; i < 3; i++)
+            {
+                //Will create a dart;
+                turnDarts.Add(new Dart());
+
+                if (Score == GameOfDarts.StartingScore || Score < 60)
+                {
+                    turnDarts.Last().Seeking = Seeking.Double;
+                }
+                else
+                {
+                    turnDarts.Last().Seeking = Seeking.HighScore;
+                }
+
+                turnDarts[i].ThrowSkilledDart(MySkill);
+
+                //Sees if the score is still the starting score and this is the first dart.
+                if (Score == GameOfDarts.StartingScore && i == 0)
+                {
+                    //Checks if the first dart is a double
+                    if (turnDarts[0].ShotRegion != Region.Double)
+                    {
+                        //Will show dart info if true
+                        if (GameOfDarts.ShowDart)
+                        {
+                            //Will print dart information if needed.
+                            turnDarts[0].Print(1);
+                        }
+                        //Prints turn outcome no matter what
+                        Console.WriteLine($"Player {PlayerNum} could not double in. Turn ended.");
+                        return;
+                    }
+                }
+
+                //Adds the current dart score 
+                curTurnScore += turnDarts[i].Score;
+
+                if ((Score - curTurnScore) < 0)
+                {
+                    if (GameOfDarts.ShowDart)
+                    {
+                        turnDarts[i].Print(i + 1);
+                    }
+                    Console.WriteLine($"Player {PlayerNum} score less than 0, turn ended.");
+                    Print();
+                    return;
+                }
+                else if ((Score - curTurnScore) == 1)
+                {
+                    if (GameOfDarts.ShowDart)
+                    {
+                        turnDarts[i].Print(i + 1);
+                    }
+                    Console.WriteLine("Impossible to win from score of 1. Turn ended.");
+                    Print();
+                    return;
+                }
+                else if ((Score - curTurnScore) == 0)
+                {
+                    if (GameOfDarts.ShowDart)
+                    {
+                        turnDarts[i].Print(i + 1);
+                    }
+
+                    if (turnDarts[i].ShotRegion == Region.Double)
+                    {
+                        Score = 0;
+                        Console.WriteLine($"Player {PlayerNum} won!");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Player {PlayerNum} must end on double. Turn ended.");
+                        Print();
+                        return;
+                    }
+                }
+                else
+                {
+                    if (GameOfDarts.ShowDart)
+                    {
+                        turnDarts[i].Print(i + 1);
+                    }
+                }
+            }
+
+            if (GameOfDarts.ShowDart)
+            {
+                Console.WriteLine($"Player {PlayerNum} turn score: {curTurnScore}");
+            }
+
+            Score -= curTurnScore;
+
+            Print();
+        }
+
+        public void Print()
+        {
+            Console.WriteLine($"Player {PlayerNum} Score: {Score}");
+        }
+    }
+    public enum Skill
+    {
+        None,
+        Low,
+        Medium,
+        High
     }
 }
